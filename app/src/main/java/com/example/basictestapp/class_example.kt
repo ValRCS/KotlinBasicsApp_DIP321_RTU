@@ -81,6 +81,73 @@ class Person(var firstName: String, var lastName:String) {
 
 }
 
+interface Shape {
+    fun computeArea() : Double
+}
+
+//lets make another interface that could be applicable to Circle
+interface Coloring {
+    val color: String
+    fun paint(newColor: String) //notice no implementation just a contract!
+}
+
+class Circle(private val radius:Double) : Shape, Coloring {
+    //I have to implement all the methods from Shape and Coloring and also the properties
+    override fun computeArea() = Math.PI * radius * radius
+    override var color: String = "white"
+    override fun paint(newColor: String) {
+        color = newColor
+    }
+}
+
+//abstract class example
+//such class can not be instantiated, we need to inherit from it
+abstract class Food {
+    abstract val kcal : Int
+    abstract val name : String
+    //lets also make abstract method
+    abstract fun getCalories() : Unit //using Unit since print does not return anything
+    //I can also have non-abstract methods and properties
+    val caloriesPerJoule = 4
+    fun consume() = println("I'm eating ${name}")
+}
+class Pizza() : Food() {
+    //i have to implement all the abstract properties
+    //using override keyword
+    override val kcal = 600
+    override val name = "Pizza"
+    //i need to implement get calories
+    override fun getCalories() = println("Kalories ${kcal * caloriesPerJoule}") //formula is wrong though....
+}
+
+
+//extension functions lets us add extra functionality to existing classes even those that we do not have access to
+fun Int.isOdd(): Boolean { return this % 2 == 1 }
+//Int is Kotlin's Int class which is a wrapper for Java's int actually
+
+//data class example
+data class Player(val name: String, var score: Int)
+
+//enum class example
+enum class Day {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+
+    //I can add methods to enum class
+    //wrap around to the next day
+    fun nextDay() : Day {
+        return when(this) {
+            MONDAY -> TUESDAY
+            TUESDAY -> WEDNESDAY
+            WEDNESDAY -> THURSDAY
+            THURSDAY -> FRIDAY
+            FRIDAY -> SATURDAY
+            SATURDAY -> SUNDAY
+            SUNDAY -> MONDAY
+        }
+    }
+}
+
+
 fun main() {
     //lets make a new house
     val myHouse = House() //so using class blueprint we created an object instance
@@ -112,4 +179,45 @@ fun main() {
     //now I could set the fullName and the name and lastName would be updated automatically
     homer.fullName = "Moe Szyslak"
     println("homer firstName is ${homer.firstName} and lastName is ${homer.lastName} and fullName is ${homer.fullName}")
+
+    val c = Circle(3.0) //radius is private so I can not access it directly
+    println(c.computeArea())
+    println(c.color)
+    c.paint("red") //we implemented the method from Coloring, we had no choice but had to implement it :)
+    println(c.color)
+
+    Pizza().consume()    // "I'm eating Pizza" //note I did not make an object instance of Pizza, I just called the method directly
+
+    //lets test our extension function
+    println("3 is odd: ${3.isOdd()}")
+    println("4 is odd: ${4.isOdd()}")
+
+    //lets test our data class
+    val player1 = Player("Homer", 100)
+    val player2 = Player("Bart", 100)
+    println(player1)
+    println(player2)
+    println(player1 == player2) //false
+    //let Bart increase his score
+    player2.score += 10
+    println(player2)
+
+    //lets test our enum class
+    val day = Day.MONDAY
+    println(day)
+    //again we use enum to limit the values that can be assigned to a variable
+    var flexibleDay = Day.MONDAY
+    flexibleDay = Day.FRIDAY
+    //can we assign a string to it?
+    //flexibleDay = "Friday" //nope
+    //is there a way to increase the value of flexibleDay?
+    //flexibleDay += 1 //nope
+    //now we can use nextDay method
+    println(flexibleDay.nextDay())
+    //next next day
+    println(flexibleDay.nextDay().nextDay())
+
+    //lets test our Animal class //note it is in the same package so I do not need to import it
+    val myAnimal = Animal("Dog", 3, true, "brown")
+    myAnimal.prettyPrint()
 }
