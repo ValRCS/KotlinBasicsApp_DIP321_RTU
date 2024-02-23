@@ -3,7 +3,7 @@ package com.example.basictestapp
 //lets make a class House with colors and number of windows and isForSale property
 class House(val name: String = "RTU",
             var color: String = "white",
-            var windows: Int = 2,
+            private var windows: Int = 2,
             var isForSale: Boolean = false,
             secret: String = "hunter2" //use case for this would be to store a secret that is only available in the constructor
 ) {
@@ -11,7 +11,7 @@ class House(val name: String = "RTU",
 //    var color: String = "white"
 //    var windows: Int = 2
 //    var isForSale: Boolean = false
-    var secretCopy = secret
+    private var secretCopy = secret
     //so let's make primary constructor block which just prints out the name of the house
     init {
         println("We just started constructing a house")
@@ -43,6 +43,16 @@ class House(val name: String = "RTU",
         isForSale = false
     }
 
+    //by adding private only other methods in this class can access this method
+    private fun checkSaleStatus(): Boolean{
+        //we could do some checks here
+        println("Checking Sale status")
+        return isForSale
+    }
+
+    fun showSecretCopy(){
+        println("The secret is $secretCopy")
+    }
 
     //lets create a closing init block - here this would be second init block
     //this block will be called after the primary constructor block
@@ -81,12 +91,15 @@ fun main() {
     val homersHouse = House("Homers House", windows = 4, color = "yellow") //so using class blueprint we created an object instance
 //    homersHouse.prettyPrint()
     //I can print secretCopy but I can not print secret
-    println("The secret is ${homersHouse.secretCopy}")
+//    println("The secret is ${homersHouse.secretCopy}")
+    //information Hiding we only access secretCopy by using showSecretCopy method
+    homersHouse.showSecretCopy()
     //original secret is gone
 //    println("The secret is ${homersHouse.secret}")
     homersHouse.paint("pink")
     //i could have changed window count directly
-    homersHouse.windows = 5
+//    homersHouse.windows = 5 //i made windows private so I need to use a method to change it
+    homersHouse.addWindows(1)
     homersHouse.prettyPrint()
 
     //lets make a person Homer Simpson
